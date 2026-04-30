@@ -11,7 +11,6 @@ AEnemyWaveSpawner::AEnemyWaveSpawner()
 	bReplicates = true;
 	
 	CurrentWaveNumber = 0;
-	AliveEnemiesNumber = 0;
 }
 
 void AEnemyWaveSpawner::BeginPlay()
@@ -27,9 +26,23 @@ void AEnemyWaveSpawner::BeginPlay()
 void AEnemyWaveSpawner::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AEnemyWaveSpawner, CurrentWaveNumber);
 	DOREPLIFETIME(AEnemyWaveSpawner, TotalWavesNumber);
-	DOREPLIFETIME(AEnemyWaveSpawner, AliveEnemiesNumber);
+	DOREPLIFETIME(AEnemyWaveSpawner, CurrentWaveNumber);
+}
+
+int AEnemyWaveSpawner::GetTotalWavesNumber() const
+{
+	return TotalWavesNumber;
+}
+
+int AEnemyWaveSpawner::GetCurrentWaveNumber() const
+{
+	return CurrentWaveNumber;
+}
+
+void AEnemyWaveSpawner::OnRep_CurrentWaveNumber()
+{
+	OnWaveUpdated.Broadcast(CurrentWaveNumber);
 }
 
 void AEnemyWaveSpawner::StartWave()
@@ -38,11 +51,9 @@ void AEnemyWaveSpawner::StartWave()
 		return;
 
 	CurrentWaveNumber++;
-
-	OnWaveUpdated.Broadcast(CurrentWaveNumber);
+	OnRep_CurrentWaveNumber();
 	
 	SpawnedEnemiesThisWave = 0;
-
 	AliveEnemiesNumber = 0;
 	
 	GetWorldTimerManager().SetTimer(
@@ -80,7 +91,6 @@ void AEnemyWaveSpawner::SpawnEnemy()
 	if (Enemy)
 	{
 		AliveEnemiesNumber++;
-		OnEnemyCountUpdated.Broadcast(AliveEnemiesNumber, SpawnedEnemiesThisWave);
 		Enemy->SetWaveSpawner(this);
 	}
 
@@ -90,7 +100,6 @@ void AEnemyWaveSpawner::SpawnEnemy()
 void AEnemyWaveSpawner::NotifyEnemyKilled()
 {
 	AliveEnemiesNumber--;
-	OnEnemyCountUpdated.Broadcast(AliveEnemiesNumber, SpawnedEnemiesThisWave);
 	CheckWaveCompleted();
 }
 

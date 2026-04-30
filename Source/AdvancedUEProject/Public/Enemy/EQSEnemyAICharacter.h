@@ -4,7 +4,6 @@
 #include "Common/BaseCharacter.h"
 #include "EQSEnemyAICharacter.generated.h"
 
-class UStaticMeshComponent;
 class UWidgetComponent;
 class AEnemyLaser;
 class AEnemyWaveSpawner;
@@ -19,7 +18,7 @@ public:
 	
 	UFUNCTION()
 	void Fire();
-	
+
 	UFUNCTION()
 	void Death();
 
@@ -35,14 +34,13 @@ protected:
 	
 	virtual void NetMulticast_OnDeath_Implementation() override;
 	
+	void DestroyEnemy();
+	
 	UPROPERTY()
 	TObjectPtr<AEnemyWaveSpawner> WaveSpawner;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI")
 	TObjectPtr<UWidgetComponent> HealthWidgetUI;
-	
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UStaticMeshComponent> CubeMesh;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Enemy|Attack")
 	TSubclassOf<class AEnemyLaser> LaserClass;

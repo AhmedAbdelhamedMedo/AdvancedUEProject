@@ -29,7 +29,7 @@ void AEQSEnemyAIController::OnPossess(class APawn* InPawn)
 	
 	if (BehaviorTreeAsset && BehaviorTreeAsset->BlackboardAsset)
 		UseBlackboard(BehaviorTreeAsset->BlackboardAsset, BlackboardComponent);
-	
+
 	RunBehaviorTree(BehaviorTreeAsset);
 }
 

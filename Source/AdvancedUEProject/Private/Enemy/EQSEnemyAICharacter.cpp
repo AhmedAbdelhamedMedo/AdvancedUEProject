@@ -22,9 +22,6 @@ AEQSEnemyAICharacter::AEQSEnemyAICharacter()
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
 	
-	CubeMesh = CreateDefaultSubobject<UStaticMeshComponent>("CubeMesh");
-	CubeMesh->SetupAttachment(RootComponent);
-	
 	HealthWidgetUI = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthWidget"));
 	HealthWidgetUI->SetupAttachment(GetRootComponent());
 	HealthWidgetUI->SetWidgetSpace(EWidgetSpace::Screen);
@@ -102,6 +99,21 @@ void AEQSEnemyAICharacter::Death()
 		GetMesh()->SetEnableGravity(true);
         GetMesh()->WakeAllRigidBodies();
 	}
+	
+	FTimerHandle DestroyTimerHandle;
+
+	GetWorld()->GetTimerManager().SetTimer(
+		DestroyTimerHandle,
+		this,
+		&AEQSEnemyAICharacter::DestroyEnemy,
+		2.0f,
+		false
+	);
+}
+
+void AEQSEnemyAICharacter::DestroyEnemy()
+{
+	Destroy();
 }
 
 void AEQSEnemyAICharacter::SetWaveSpawner(AEnemyWaveSpawner* InSpawner)

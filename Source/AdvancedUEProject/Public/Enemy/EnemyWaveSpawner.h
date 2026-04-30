@@ -18,6 +18,9 @@ public:
 	AEnemyWaveSpawner();
 
 	void NotifyEnemyKilled();
+	
+	int GetTotalWavesNumber() const;
+	int GetCurrentWaveNumber() const;
 
 	UPROPERTY(BlueprintAssignable, Category="Wave")
 	FOnWaveUpdated OnWaveUpdated;
@@ -29,7 +32,7 @@ protected:
 	virtual void BeginPlay() override;
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Wave")
 	TSubclassOf<AEQSEnemyAICharacter> EnemyClass;
 
@@ -45,22 +48,26 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Wave")
 	float SpawnRadius = 1000.0f;
 
-	UPROPERTY(Replicated, BlueprintReadOnly, Category="Wave")
+	UPROPERTY(ReplicatedUsing = OnRep_CurrentWaveNumber, BlueprintReadOnly)
 	int CurrentWaveNumber;
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category="Wave")
 	int TotalWavesNumber;
 
-	UPROPERTY(Replicated, BlueprintReadOnly, Category="Wave")
+	UPROPERTY()
 	int AliveEnemiesNumber;
 
 	UPROPERTY(EditAnywhere, Category="Wave")
 	int TotalWaves;
 	
+	UFUNCTION()
+	void OnRep_CurrentWaveNumber();
+
 private:
 	FTimerHandle SpawnTimerHandle;
+	
 	FTimerHandle NextWaveTimerHandle;
-
+	
 	void StartWave();
 
 	void SpawnEnemy();
