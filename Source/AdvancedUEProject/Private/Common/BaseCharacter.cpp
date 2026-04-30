@@ -1,8 +1,10 @@
 #include "Common/BaseCharacter.h"
 
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Net/UnrealNetwork.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "Player/MP_PlayerCharacter.h"
+#include "WaveGameState.h"
 
 ABaseCharacter::ABaseCharacter()
 {
@@ -107,9 +109,11 @@ void ABaseCharacter::BroadcastHealthChanged()
 
 void ABaseCharacter::OnDeath()
 {
-	// Server-side logic (score, spawn drops, AI state, etc.) goes here or in subclasses.
-	// Then propagate death effects to all clients.
 	NetMulticast_OnDeath();
+	
+	if (HasAuthority() && Cast<AMP_PlayerCharacter>(this))
+		if (AWaveGameState* GS = GetWorld()->GetGameState<AWaveGameState>())
+			GS->NotifyPlayerDied();
 }
 
 void ABaseCharacter::NetMulticast_OnDeath_Implementation()
