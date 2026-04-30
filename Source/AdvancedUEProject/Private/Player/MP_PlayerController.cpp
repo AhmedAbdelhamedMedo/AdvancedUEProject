@@ -2,6 +2,7 @@
 
 #include "EnhancedInputSubsystems.h"
 #include "Player/MP_PlayerCharacter.h"
+#include "Player/UI/MP_PauseMenuUI.h"
 #include "Common/MP_HealthUI.h"
 
 void AMP_PlayerController::BeginPlay()
@@ -34,4 +35,36 @@ void AMP_PlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
+}
+
+void AMP_PlayerController::TogglePauseMenu()
+{ 
+	if (!PauseMenuWidget)
+		PauseMenuWidget = CreateWidget<UMP_PauseMenuUI>(this, PauseMenuClass);
+
+	if (!PauseMenuWidget->IsInViewport())
+	{
+		PauseMenuWidget->AddToViewport();
+
+		FInputModeUIOnly Mode;
+		Mode.SetWidgetToFocus(PauseMenuWidget->TakeWidget());
+
+		SetInputMode(Mode);
+
+		bShowMouseCursor = true;
+
+		SetIgnoreMoveInput(true);
+		SetIgnoreLookInput(true);
+	}
+	else
+	{
+		PauseMenuWidget->RemoveFromParent();
+
+		SetInputMode(FInputModeGameOnly());
+
+		bShowMouseCursor = false;
+
+		SetIgnoreMoveInput(false);
+		SetIgnoreLookInput(false);
+	}
 }

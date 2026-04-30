@@ -10,6 +10,7 @@ class UCameraComponent;
 class UInputAction;
 class UAnimMontage;
 class AMP_Weapon;
+class AMP_PlayerController;
 struct FInputActionValue;
 
 UCLASS()
@@ -63,7 +64,7 @@ protected:
 	float AttackCooldown = 0.5f;
 
 	UPROPERTY()
-	TObjectPtr<APlayerController> PlayerController;
+	TObjectPtr<AMP_PlayerController> PlayerController;
 
 	UPROPERTY(EditAnywhere, Category = "Components")
 	TObjectPtr<AMP_Weapon> WeaponMesh;
@@ -82,7 +83,7 @@ protected:
 	TObjectPtr<UInputAction> JumpAction;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<UInputAction> InteractAction;
+	TObjectPtr<UInputAction> PauseAction;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> AttackAction;
@@ -97,17 +98,14 @@ protected:
 	void HandleJumpStop();
 	void HandleSprintStart();
 	void HandleSprintStop();
-	void HandleInteract();
 	void HandleAttack();
+	void TogglePauseMenu();
 
 	UFUNCTION(Server, Reliable)
 	void SERVER_HandleSprintStart();
 
 	UFUNCTION(Server, Reliable)
 	void SERVER_HandleSprintStop();
-
-	UFUNCTION(Server, Reliable)
-	void SERVER_HandleInteract();
 
 	UFUNCTION(Server, Reliable)
 	void SERVER_HandleAttack();
@@ -121,10 +119,10 @@ protected:
 public:
 	FGenericTeamId TeamID = FGenericTeamId(5);
 	
+	void FireWeaponNotify() const;
+	
 	virtual FGenericTeamId GetGenericTeamId() const override { return TeamID; }
 	
-	void FireWeaponNotify() const;
-
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

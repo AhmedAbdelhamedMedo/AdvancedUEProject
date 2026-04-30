@@ -5,7 +5,7 @@
 
 AWaveGameState::AWaveGameState()
 {
-	NetUpdateFrequency = 10.0f;
+	SetNetUpdateFrequency(10.0f);
 }
 
 void AWaveGameState::BeginPlay()

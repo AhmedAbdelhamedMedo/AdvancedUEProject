@@ -1,11 +1,12 @@
 #include "Player/MP_PlayerCharacter.h"
 
-#include "Camera/CameraComponent.h"
-#include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/MP_PlayerController.h"
 #include "MP_Weapon.h"
 
 AMP_PlayerCharacter::AMP_PlayerCharacter()
@@ -47,7 +48,7 @@ AMP_PlayerCharacter::AMP_PlayerCharacter()
 void AMP_PlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	PlayerController = Cast<APlayerController>(GetController());
+	PlayerController = Cast<AMP_PlayerController>(GetController());
 	
 	FTimerHandle WeaponIntializationTimerHandle;
 	GetWorldTimerManager().SetTimer(
@@ -115,10 +116,9 @@ void AMP_PlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AMP_PlayerCharacter::HandleSprintStart);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AMP_PlayerCharacter::HandleSprintStop);
-
-		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AMP_PlayerCharacter::HandleInteract);
-
+		
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AMP_PlayerCharacter::HandleAttack);
+		EnhancedInputComponent->BindAction(PauseAction,	ETriggerEvent::Started,	this, &AMP_PlayerCharacter::TogglePauseMenu);
 	}
 }
 
@@ -164,11 +164,6 @@ void AMP_PlayerCharacter::HandleSprintStop()
 	SERVER_HandleSprintStop();
 }
 
-void AMP_PlayerCharacter::HandleInteract()
-{
-	SERVER_HandleInteract();
-}
-
 void AMP_PlayerCharacter::HandleAttack()
 {
 	HandleSprintStop();
@@ -188,6 +183,11 @@ void AMP_PlayerCharacter::HandleAttack()
 	}
 }
 
+void AMP_PlayerCharacter::TogglePauseMenu()
+{
+	PlayerController->TogglePauseMenu();
+}
+
 void AMP_PlayerCharacter::FireWeaponNotify() const
 {
 	if (WeaponMesh && IsLocallyControlled())
@@ -202,10 +202,6 @@ void AMP_PlayerCharacter::SERVER_HandleSprintStart_Implementation()
 void AMP_PlayerCharacter::SERVER_HandleSprintStop_Implementation()
 {
 	GetCharacterMovement()->MaxWalkSpeed = BaseSpeed;
-}
-
-void AMP_PlayerCharacter::SERVER_HandleInteract_Implementation()
-{
 }
 
 void AMP_PlayerCharacter::SERVER_HandleAttack_Implementation()
