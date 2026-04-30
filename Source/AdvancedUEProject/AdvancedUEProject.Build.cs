@@ -27,11 +27,7 @@ public class AdvancedUEProject : ModuleRules
 		PrivateDependencyModuleNames.AddRange(new string[] { "Niagara" });
 
 		PublicIncludePaths.AddRange(new string[] {
-			"AdvancedUEProject",
-			"AdvancedUEProject/Variant_Shooter",
-			"AdvancedUEProject/Variant_Shooter/AI",
-			"AdvancedUEProject/Variant_Shooter/UI",
-			"AdvancedUEProject/Variant_Shooter/Weapons"
+			"AdvancedUEProject"
 		});
 
 		// Uncomment if you are using Slate UI
