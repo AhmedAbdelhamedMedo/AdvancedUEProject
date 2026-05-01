@@ -43,12 +43,18 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* JoinButton;
+	
+	UPROPERTY(meta = (BindWidget))
+	UButton* ExitButton;
 
 	UFUNCTION()
 	void HostButtonClicked();
 
 	UFUNCTION()
 	void JoinButtonClicked();
+	
+	UFUNCTION()
+	void ExitButtonClicked();
 
 	void MenuTearDown();
 

@@ -35,6 +35,9 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> btn_Restart;
 	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> btn_Exit;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Match Result")
 	FString MainMenuMap = TEXT("/Game/FirstPerson/MainMenu");
 	
@@ -50,6 +53,9 @@ private:
 
 	UFUNCTION()
 	void OnRestartVoteChanged(int VoteCount, int VotesNeeded);
+	
+	UFUNCTION()
+	void OnExitClicked();
 	
 	void ApplyResult(EMatchPhase Result);
 

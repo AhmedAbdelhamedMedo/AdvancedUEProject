@@ -77,7 +77,7 @@ void AMP_PlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsLocallyControlled() && !Rep_bCanAttack && bIsDead && PlayerController)
+	if (IsLocallyControlled() && !Rep_bCanAttack && !bIsDead && PlayerController)
 	{
 		FVector WorldLocation, WorldDirection;
 

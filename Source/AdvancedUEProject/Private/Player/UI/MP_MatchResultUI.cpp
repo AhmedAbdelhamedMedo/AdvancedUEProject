@@ -6,6 +6,7 @@
 #include "Components/TextBlock.h"
 #include "Player/MP_PlayerController.h"
 #include "WaveGameState.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 void UMP_MatchResultUI::NativeConstruct()
 {
@@ -19,6 +20,9 @@ void UMP_MatchResultUI::NativeConstruct()
 
 	if (btn_Restart)
 		btn_Restart->OnClicked.AddDynamic(this, &UMP_MatchResultUI::OnRestartClicked);
+	
+	if (btn_Exit)
+		btn_Restart->OnClicked.AddDynamic(this, &UMP_MatchResultUI::OnExitClicked);
 		
 	if (txt_RestartVotes)
 		txt_RestartVotes->SetText(FText::FromString(TEXT("Restart (0/?)")));
@@ -96,6 +100,16 @@ void UMP_MatchResultUI::ApplyResult(EMatchPhase Result)
 		PC->SetInputMode(InputMode);
 		PC->SetShowMouseCursor(true);
 	}
+}
+
+void UMP_MatchResultUI::OnExitClicked()
+{
+	UKismetSystemLibrary::QuitGame(
+		this,
+		GetOwningPlayer(),
+		EQuitPreference::Quit,
+		false
+	);
 }
 
 void UMP_MatchResultUI::OnRestartClicked()
