@@ -11,4 +11,6 @@ class ADVANCEDUEPROJECT_API APlayerGameMode : public AGameModeBase
 	
 protected:
 	virtual void BeginPlay() override;
+
+	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 };

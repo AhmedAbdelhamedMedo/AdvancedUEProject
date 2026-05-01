@@ -75,11 +75,8 @@ void UMenu::OnCreateSession(bool bWasSuccessful)
 {
 	if (bWasSuccessful)
 	{
-		UWorld* World = GetWorld();
-		if (World)
-		{
+		if (UWorld* World = GetWorld())
 			World->ServerTravel(PathToLobby);
-		}
 	}
 	else
 	{
@@ -99,9 +96,7 @@ void UMenu::OnCreateSession(bool bWasSuccessful)
 void UMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResults, bool bWasSuccessful)
 {
 	if (MultiplayerSessionsSubsystem == nullptr)
-	{
 		return;
-	}
 
 	for (auto Result : SessionResults)
 	{
@@ -114,15 +109,12 @@ void UMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResu
 		}
 	}
 	if (!bWasSuccessful || SessionResults.Num() == 0)
-	{
 		JoinButton->SetIsEnabled(true);
-	}
 }
 
 void UMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
 {
-	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
-	if (Subsystem)
+	if (IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get())
 	{
 		IOnlineSessionPtr SessionInterface = Subsystem->GetSessionInterface();
 		if (SessionInterface.IsValid())
@@ -130,11 +122,8 @@ void UMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
 			FString Address;
 			SessionInterface->GetResolvedConnectString(NAME_GameSession, Address);
 
-			APlayerController* PlayerController = GetGameInstance()->GetFirstLocalPlayerController();
-			if (PlayerController)
-			{
+			if (APlayerController* PlayerController = GetGameInstance()->GetFirstLocalPlayerController())
 				PlayerController->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
-			}
 		}
 	}
 }
@@ -151,25 +140,20 @@ void UMenu::HostButtonClicked()
 {
 	HostButton->SetIsEnabled(false);
 	if (MultiplayerSessionsSubsystem)
-	{
 		MultiplayerSessionsSubsystem->CreateSession(NumPublicConnections, MatchType);
-	}
 }
 
 void UMenu::JoinButtonClicked()
 {
 	JoinButton->SetIsEnabled(false);
 	if (MultiplayerSessionsSubsystem)
-	{
 		MultiplayerSessionsSubsystem->FindSessions(10000);
-	}
 }
 
 void UMenu::MenuTearDown()
 {
 	RemoveFromParent();
-	UWorld* World = GetWorld();
-	if (World)
+	if (UWorld* World = GetWorld())
 	{
 		APlayerController* PlayerController = World->GetFirstPlayerController();
 		if (PlayerController)

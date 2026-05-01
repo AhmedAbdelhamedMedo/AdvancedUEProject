@@ -2,6 +2,7 @@
 
 #include "EnhancedInputSubsystems.h"
 #include "Player/MP_PlayerCharacter.h"
+#include "Player/UI/MP_MatchResultUI.h"
 #include "Player/UI/MP_PauseMenuUI.h"
 #include "Player/UI/MP_PlayerUI.h"
 
@@ -24,6 +25,11 @@ void AMP_PlayerController::BeginPlay()
 			InGameWidget->AddToViewport();
 			InGameWidget->InitializeWithCharacter(Cast<AMP_PlayerCharacter>(GetPawn()));
 		}
+
+		MatchResultWidget = CreateWidget<UMP_MatchResultUI>(GetWorld(), MatchResultWidgetClass);
+
+		if (MatchResultWidget)
+			MatchResultWidget->AddToViewport(1);
 	}
 	
     UE_LOG(LogTemp, Warning, TEXT("PC BeginPlay: %s"), *GetName());
@@ -39,7 +45,7 @@ void AMP_PlayerController::SetupInputComponent()
 void AMP_PlayerController::TogglePauseMenu()
 { 
 	if (!PauseMenuWidget)
-		PauseMenuWidget = CreateWidget<UMP_PauseMenuUI>(this, PauseMenuClass);
+		PauseMenuWidget = CreateWidget<UMP_PauseMenuUI>(this, PauseMenuWidgetClass);
 
 	if (!PauseMenuWidget->IsInViewport())
 	{

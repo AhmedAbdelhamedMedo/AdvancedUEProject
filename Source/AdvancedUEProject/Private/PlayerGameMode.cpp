@@ -14,3 +14,10 @@ void APlayerGameMode::BeginPlay()
 	if (AWaveGameState* GS = GetGameState<AWaveGameState>())
 		GS->RegisterSpawner(Spawner);
 }
+
+void APlayerGameMode::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
+{
+	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
+	if (AWaveGameState* GS = GetGameState<AWaveGameState>())
+		GS->NotifyPlayerSpawned();
+}

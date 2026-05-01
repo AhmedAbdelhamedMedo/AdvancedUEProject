@@ -20,8 +20,9 @@ public:
 	void MenuSetup(int32 NumberOfPublicConnections = 4, FString TypeOfMatch = FString(TEXT("FreeForAll")),
 	               FString LobbyPath = FString(TEXT("/Game/ThirdPersonCPP/Maps/Lobby")));
 
-protected:
 	virtual bool Initialize() override;
+	
+protected:
 	virtual void NativeDestruct() override;
 
 	//
@@ -56,5 +57,5 @@ private:
 
 	int32 NumPublicConnections{4};
 	FString MatchType{TEXT("FreeForAll")};
-	FString PathToLobby{TEXT("/Game/FirstPerson/Lvl_FirstPerson")};
+	FString PathToLobby{TEXT("")};
 };

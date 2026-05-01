@@ -21,7 +21,8 @@ public class AdvancedUEProject : ModuleRules
 			"UMG",
 			"Slate",
 			"GameplayTasks",
-			"NavigationSystem"
+			"NavigationSystem",
+			"MultiplayerSessions"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "Niagara" });
