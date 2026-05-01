@@ -7,7 +7,7 @@
 
 class UInputMappingContext;
 class UUserWidget;
-class UMP_HealthUI;
+class UMP_PlayerUI;
 class UMP_PauseMenuUI;
 
 UCLASS()
@@ -27,13 +27,13 @@ protected:
 	UInputMappingContext* DefaultMappingContext;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-	TSubclassOf<UMP_HealthUI> HealthWidgetClass;
+	TSubclassOf<UMP_PlayerUI> InGameWidgetClass;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UMP_PauseMenuUI> PauseMenuClass;
 
 	UPROPERTY()
-	TObjectPtr<UMP_HealthUI> HealthWidget;
+	TObjectPtr<UMP_PlayerUI> InGameWidget;
 	
 	UPROPERTY()
 	TObjectPtr<UMP_PauseMenuUI> PauseMenuWidget;

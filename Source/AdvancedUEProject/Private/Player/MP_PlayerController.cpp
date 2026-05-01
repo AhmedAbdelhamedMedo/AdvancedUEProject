@@ -3,7 +3,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Player/MP_PlayerCharacter.h"
 #include "Player/UI/MP_PauseMenuUI.h"
-#include "Common/MP_HealthUI.h"
+#include "Player/UI/MP_PlayerUI.h"
 
 void AMP_PlayerController::BeginPlay()
 {
@@ -17,13 +17,12 @@ void AMP_PlayerController::BeginPlay()
 
 	if (IsLocalController())
 	{
-		HealthWidget = CreateWidget<UMP_HealthUI>(this, HealthWidgetClass);
+		InGameWidget = CreateWidget<UMP_PlayerUI>(this, InGameWidgetClass);
 
-		if (HealthWidget)
+		if (InGameWidget)
 		{
-			HealthWidget->AddToViewport();
-			AMP_PlayerCharacter* Char = Cast<AMP_PlayerCharacter>(GetPawn());
-			HealthWidget->InitializeWithCharacter(Char);
+			InGameWidget->AddToViewport();
+			InGameWidget->InitializeWithCharacter(Cast<AMP_PlayerCharacter>(GetPawn()));
 		}
 	}
 	

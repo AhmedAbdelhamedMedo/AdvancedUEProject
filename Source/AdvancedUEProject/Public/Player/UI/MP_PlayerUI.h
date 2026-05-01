@@ -13,13 +13,19 @@ class ADVANCEDUEPROJECT_API UMP_PlayerUI : public UMP_HealthUI
 
 protected:
 	virtual void NativeConstruct() override;
-	
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> TB_PlayersNumber;
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> TB_Wave;
-	
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> TB_EnemyCount;
-	
+
 	UFUNCTION()
-	void HandleWaveUpdated(int CurrentWave);
+	void HandleWaveUpdated(int CurrentWave, int TotalWaves);
+
+	UFUNCTION()
+	void HandlePlayersUpdated(int AlivePlayers);
 };
