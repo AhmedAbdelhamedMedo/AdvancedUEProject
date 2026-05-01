@@ -2,10 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "PlayerGamerMode.generated.h"
+#include "PlayerGameMode.generated.h"
 
 UCLASS()
-class ADVANCEDUEPROJECT_API APlayerGamerMode : public AGameModeBase
+class ADVANCEDUEPROJECT_API APlayerGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	

@@ -36,7 +36,7 @@ public:
 
 	void NotifyPlayerDied();
 
-	// void NotifyPlayerSpawned();
+	void NotifyPlayerSpawned();
 
 	UFUNCTION(BlueprintPure, Category = "Wave")
 	int GetCurrentWave() const;

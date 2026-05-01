@@ -18,10 +18,10 @@ protected:
 	TObjectPtr<UTextBlock> TB_PlayersNumber;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> TB_Wave;
+	TObjectPtr<UTextBlock> TB_CurrentWave;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> TB_EnemyCount;
+	TObjectPtr<UTextBlock> TB_TotalWaveCount;
 
 	UFUNCTION()
 	void HandleWaveUpdated(int CurrentWave, int TotalWaves);

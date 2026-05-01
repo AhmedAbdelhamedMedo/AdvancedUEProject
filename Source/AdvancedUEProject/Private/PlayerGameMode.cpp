@@ -1,10 +1,10 @@
-﻿#include "PlayerGamerMode.h"
+﻿#include "PlayerGameMode.h"
 
 #include "WaveGameState.h"
 #include "Enemy/EnemyWaveSpawner.h"
 #include "Kismet/GameplayStatics.h"
 
-void APlayerGamerMode::BeginPlay()
+void APlayerGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 

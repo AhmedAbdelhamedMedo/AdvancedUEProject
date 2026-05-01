@@ -86,9 +86,7 @@ void AWaveGameState::RegisterSpawner(AEnemyWaveSpawner* InSpawner)
 void AWaveGameState::OnSpawnerWaveUpdated(int NewWave)
 {
 	if (!HasAuthority())
-	{
 		return;
-	}
 
 	CurrentWave = NewWave;
 	TotalWaves = Spawner ? Spawner->GetTotalWavesNumber() : TotalWaves;
@@ -96,36 +94,30 @@ void AWaveGameState::OnSpawnerWaveUpdated(int NewWave)
 	OnWaveProgressChanged.Broadcast(CurrentWave, TotalWaves);
 
 	if ((CurrentWave >= TotalWaves - 1) && (AliveEnemies == 0))
-	{
 		SetMatchPhase(EMatchPhase::Victory);
-	}
 }
 
 void AWaveGameState::OnSpawnerEnemyCountUpdated(int Alive, int Total)
 {
 	if (!HasAuthority())
-	{
 		return;
-	}
 
 	AliveEnemies = Alive;
 	TotalEnemies = Total;
 
 	OnEnemyCountChanged.Broadcast(AliveEnemies, TotalEnemies);
 
-	if (Spawner && (CurrentWave >= Spawner->GetTotalWavesNumber() - 1) && (AliveEnemies <= 0) && MatchPhase ==
-		EMatchPhase::InProgress)
-	{
+	if (Spawner
+		&& (CurrentWave >= Spawner->GetTotalWavesNumber() - 1)
+		&& (AliveEnemies <= 0)
+		&& MatchPhase == EMatchPhase::InProgress)
 		SetMatchPhase(EMatchPhase::Victory);
-	}
 }
 
 void AWaveGameState::NotifyPlayerDied()
 {
 	if (!HasAuthority())
-	{
 		return;
-	}
 
 	AlivePlayers = FMath::Max(0, AlivePlayers - 1);
 
@@ -134,12 +126,18 @@ void AWaveGameState::NotifyPlayerDied()
 	CheckDefeatCondition();
 }
 
+void AWaveGameState::NotifyPlayerSpawned()
+{
+	if (!HasAuthority()) return;
+
+	AlivePlayers++;
+	OnAlivePlayersChanged.Broadcast(AlivePlayers);
+}
+
 void AWaveGameState::SetMatchPhase(EMatchPhase NewPhase)
 {
 	if (!HasAuthority() || MatchPhase == NewPhase)
-	{
 		return;
-	}
 
 	MatchPhase = NewPhase;
 
@@ -149,9 +147,7 @@ void AWaveGameState::SetMatchPhase(EMatchPhase NewPhase)
 void AWaveGameState::CheckDefeatCondition()
 {
 	if (MatchPhase == EMatchPhase::InProgress && AlivePlayers <= 0)
-	{
 		SetMatchPhase(EMatchPhase::Defeat);
-	}
 }
 
 void AWaveGameState::OnRep_MatchPhase()
