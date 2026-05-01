@@ -97,10 +97,12 @@ void AWaveGameState::OnSpawnerWaveUpdated(int NewWave)
 	CurrentWave = NewWave;
 	TotalWaves = Spawner ? Spawner->GetTotalWavesNumber() : TotalWaves;
 
-	OnWaveProgressChanged.Broadcast(CurrentWave, TotalWaves);
 
-	if ((CurrentWave >= TotalWaves - 1) && (AliveEnemies == 0))
-		SetMatchPhase(EMatchPhase::Victory);
+	if (TotalWaves > 0 && CurrentWave >= TotalWaves)
+	{
+		bFinalWaveStarted = true;
+	}
+	OnWaveProgressChanged.Broadcast(CurrentWave, TotalWaves);
 }
 
 void AWaveGameState::OnSpawnerEnemyCountUpdated(int Alive, int Total)
@@ -112,12 +114,11 @@ void AWaveGameState::OnSpawnerEnemyCountUpdated(int Alive, int Total)
 	TotalEnemies = Total;
 
 	OnEnemyCountChanged.Broadcast(AliveEnemies, TotalEnemies);
-
-	if (Spawner
-		&& (CurrentWave >= Spawner->GetTotalWavesNumber() - 1)
-		&& (AliveEnemies <= 0)
-		&& MatchPhase == EMatchPhase::InProgress)
+	
+	if (bFinalWaveStarted && AliveEnemies <= 0 && MatchPhase == EMatchPhase::InProgress)
+	{
 		SetMatchPhase(EMatchPhase::Victory);
+	}
 }
 
 void AWaveGameState::NotifyPlayerDied()
@@ -207,16 +208,22 @@ void AWaveGameState::TriggerRestart()
 	if (!HasAuthority())
 		return;
 	
-	const FString CurrentMap = GetWorld()->GetMapName();
+	FString MapToLoad = GameplayMapPath;
+	if (MapToLoad.IsEmpty())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("WaveGameState: GameplayMapPath is not set! "
+			"Call SetGameplayMapPath() from your GameMode BeginPlay."));
+		return;
+	}
  
-	FString CleanMap = CurrentMap;
-	CleanMap.RemoveFromStart(GetWorld()->StreamingLevelsPrefix);
- 
+	bFinalWaveStarted = false;
 	FTimerHandle RestartTimerHandle;
-	GetWorldTimerManager().SetTimer(
-		RestartTimerHandle,
-		[this, CleanMap]()
-		{GetWorld()->ServerTravel(CleanMap + TEXT("?listen"), true);},
-		1.5f, 
-		false);
+	GetWorldTimerManager().SetTimer(RestartTimerHandle, [this, MapToLoad]()
+	{
+		if (UWorld* World = GetWorld())
+		{
+
+			World->ServerTravel(MapToLoad + TEXT("?listen"), true);
+		}
+	}, 1.5f, false);
 }

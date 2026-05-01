@@ -91,7 +91,10 @@ void AEnemyWaveSpawner::SpawnEnemy()
 	if (Enemy)
 	{
 		AliveEnemiesNumber++;
+		SpawnedEnemiesThisWave++;
 		Enemy->SetWaveSpawner(this);
+		OnEnemyCountUpdated.Broadcast(AliveEnemiesNumber, EnemiesPerWave);
+
 	}
 
 	SpawnedEnemiesThisWave++;
@@ -99,15 +102,24 @@ void AEnemyWaveSpawner::SpawnEnemy()
 
 void AEnemyWaveSpawner::NotifyEnemyKilled()
 {
-	AliveEnemiesNumber--;
+	AliveEnemiesNumber = FMath::Max(0, AliveEnemiesNumber - 1);
+ 
+	OnEnemyCountUpdated.Broadcast(AliveEnemiesNumber, EnemiesPerWave);
+ 
 	CheckWaveCompleted();
 }
 
 void AEnemyWaveSpawner::CheckWaveCompleted()
 {
-	if (AliveEnemiesNumber > 0)
+	const bool bAllSpawned = (SpawnedEnemiesThisWave >= EnemiesPerWave);
+	const bool bAllDead    = (AliveEnemiesNumber <= 0);
+ 
+	if (!bAllSpawned || !bAllDead)
 		return;
 	
+	if (CurrentWaveNumber >= TotalWavesNumber)
+		return;
+ 
 	GetWorldTimerManager().SetTimer(
 		NextWaveTimerHandle,
 		this,

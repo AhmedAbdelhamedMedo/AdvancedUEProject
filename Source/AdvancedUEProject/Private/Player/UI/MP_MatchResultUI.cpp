@@ -22,7 +22,7 @@ void UMP_MatchResultUI::NativeConstruct()
 		btn_Restart->OnClicked.AddDynamic(this, &UMP_MatchResultUI::OnRestartClicked);
 	
 	if (btn_Exit)
-		btn_Restart->OnClicked.AddDynamic(this, &UMP_MatchResultUI::OnExitClicked);
+		btn_Exit->OnClicked.AddDynamic(this, &UMP_MatchResultUI::OnExitClicked);
 		
 	if (txt_RestartVotes)
 		txt_RestartVotes->SetText(FText::FromString(TEXT("Restart (0/?)")));

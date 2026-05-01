@@ -39,6 +39,8 @@ public:
 	void NotifyPlayerDied();
 
 	void NotifyPlayerSpawned();
+	
+	void SetGameplayMapPath(const FString& MapPath) { GameplayMapPath = MapPath; }
 
 	void RegisterRestartVote(APlayerController* Voter);
 
@@ -81,6 +83,7 @@ public:
 
 	UPROPERTY()
 	FOnRestartVoteChanged OnRestartVoteChanged;
+	bool bFinalWaveStarted;
 
 protected:
 	virtual void BeginPlay() override;
@@ -141,4 +144,6 @@ private:
 	
 	UPROPERTY()
 	TArray<TObjectPtr<APlayerController>> RestartVoters;
+	
+	FString GameplayMapPath;
 };
