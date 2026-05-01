@@ -23,6 +23,9 @@ public:
 	
 	void TogglePauseMenu();
 	
+	UFUNCTION(Server, Reliable)
+	void SERVER_RequestRestart();
+	
 protected:
 	UPROPERTY(EditAnywhere, Category = "Input|Input Mapping")
 	UInputMappingContext* DefaultMappingContext;

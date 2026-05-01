@@ -23,6 +23,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnEnemyCountChanged, int, Alive, i
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAlivePlayersChanged, int, AlivePlayers);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnRestartVoteChanged, int, VotesCount, int, VotesNeeded);
+
 UCLASS()
 class ADVANCEDUEPROJECT_API AWaveGameState : public AGameStateBase
 {
@@ -31,46 +33,54 @@ class ADVANCEDUEPROJECT_API AWaveGameState : public AGameStateBase
 public:
 	AWaveGameState();
 
-	UFUNCTION(BlueprintCallable, Category = "Wave")
+	UFUNCTION()
 	void RegisterSpawner(AEnemyWaveSpawner* InSpawner);
 
 	void NotifyPlayerDied();
 
 	void NotifyPlayerSpawned();
 
-	UFUNCTION(BlueprintPure, Category = "Wave")
+	void RegisterRestartVote(APlayerController* Voter);
+
+	UFUNCTION()
 	int GetCurrentWave() const;
 
-	UFUNCTION(BlueprintPure, Category = "Wave")
+	UFUNCTION()
 	int GetTotalWaves() const;
 
-	UFUNCTION(BlueprintPure, Category = "Wave")
+	UFUNCTION()
 	int GetAliveEnemies() const;
 
-	UFUNCTION(BlueprintPure, Category = "Wave")
+	UFUNCTION()
 	int GetTotalEnemies() const;
 
-	UFUNCTION(BlueprintPure, Category = "Match")
+	UFUNCTION()
 	int GetAlivePlayers() const;
 
-	UFUNCTION(BlueprintPure, Category = "Match")
+	UFUNCTION()
+	int GetRestartVotes()   const;
+
+	UFUNCTION()
 	EMatchPhase GetMatchPhase() const;
 
-	UFUNCTION(BlueprintPure, Category = "Match")
+	UFUNCTION()
 	bool IsMatchInProgress() const;
 
 
-	UPROPERTY(BlueprintAssignable, Category = "Match|Events")
+	UPROPERTY()
 	FOnMatchPhaseChanged OnMatchPhaseChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "Wave|Events")
+	UPROPERTY()
 	FOnWaveProgressChanged OnWaveProgressChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "Wave|Events")
+	UPROPERTY()
 	FOnEnemyCountChanged OnEnemyCountChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "Match|Events")
+	UPROPERTY()
 	FOnAlivePlayersChanged OnAlivePlayersChanged;
+
+	UPROPERTY()
+	FOnRestartVoteChanged OnRestartVoteChanged;
 
 protected:
 	virtual void BeginPlay() override;
@@ -96,6 +106,9 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_AlivePlayers, BlueprintReadOnly, Category = "Match", meta = (AllowPrivateAccess))
 	int AlivePlayers = 0;
 
+	UPROPERTY(ReplicatedUsing = OnRep_RestartVotes, BlueprintReadOnly, Category = "Match", meta = (AllowPrivateAccess))
+	int RestartVotes = 0;
+	
 	UFUNCTION()
 	void OnRep_MatchPhase();
 
@@ -109,6 +122,9 @@ private:
 	void OnRep_AlivePlayers();
 
 	UFUNCTION()
+	void OnRep_RestartVotes();
+	
+	UFUNCTION()
 	void OnSpawnerWaveUpdated(int NewWave);
 
 	UFUNCTION()
@@ -118,6 +134,11 @@ private:
 
 	void CheckDefeatCondition();
 
+	void TriggerRestart();
+	
 	UPROPERTY()
 	TObjectPtr<AEnemyWaveSpawner> Spawner;
+	
+	UPROPERTY()
+	TArray<TObjectPtr<APlayerController>> RestartVoters;
 };

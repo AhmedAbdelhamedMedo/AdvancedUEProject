@@ -1,13 +1,13 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Controller.h"
+#include "GameFramework/PlayerController.h"
 #include "MainMenuPlayerController.generated.h"
 
-class UMainMenuWidget;
+class UMenu;
 
 UCLASS()
-class ADVANCEDUEPROJECT_API AMainMenuPlayerController : public AController
+class ADVANCEDUEPROJECT_API AMainMenuPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
@@ -15,8 +15,8 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
-	TSubclassOf<UMainMenuWidget> MainMenuWidgetClass;
+	TSubclassOf<UMenu> MainMenuWidgetClass;
 
 	UPROPERTY()
-	TObjectPtr<UMainMenuWidget> MainMenuWidget;
+	TObjectPtr<UMenu> MainMenuWidget;
 };

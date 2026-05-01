@@ -15,7 +15,7 @@ class ADVANCEDUEPROJECT_API UMP_MatchResultUI : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Match Result")
+	UFUNCTION()
 	void InitAndShow(EMatchPhase Result);
 
 protected:
@@ -25,21 +25,35 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> txt_Result;
+	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> txt_RestartVotes;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> btn_MainMenu;
-
+ 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> btn_Restart;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Match Result")
 	FString MainMenuMap = TEXT("/Game/FirstPerson/MainMenu");
-
+	
 private:
+	UFUNCTION()
+	void OnRestartClicked();
+	
 	UFUNCTION()
 	void OnMainMenuClicked();
 
 	UFUNCTION()
 	void OnMatchPhaseChanged(EMatchPhase NewPhase);
 
+	UFUNCTION()
+	void OnRestartVoteChanged(int VoteCount, int VotesNeeded);
+	
 	void ApplyResult(EMatchPhase Result);
 
 	void TravelToMainMenu();
+	
+	bool bHasVotedRestart = false;
 };

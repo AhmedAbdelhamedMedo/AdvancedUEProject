@@ -33,7 +33,7 @@ private:
 
 	UPROPERTY(ReplicatedUsing = OnRep_YawRotation)
 	float Rep_fYawRotation = 0.0f;
-	
+
 	UFUNCTION()
 	void OnRep_CanAttack();
 
@@ -50,6 +50,12 @@ private:
 	void ResetAttack();
 	
 	FTimerHandle AttackCooldownHandle;
+	
+	virtual void NetMulticast_OnDeath_Implementation() override;
+	
+	void Death();
+
+	bool bIsDead = false;
 	
 protected:
 	virtual void BeginPlay() override;

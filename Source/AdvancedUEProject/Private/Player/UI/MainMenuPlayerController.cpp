@@ -1,28 +1,31 @@
 ﻿#include "Player/UI/MainMenuPlayerController.h"
-#include "Blueprint/UserWidget.h"
-// #include "Menu.h
+
+#include "Menu.h"
 
 void AMainMenuPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// if (MainMenuWidgetClass)
-	// {
-	// 	MainMenuWidget = CreateWidget<UMenu>(
-	// 		this,
-	// 		MainMenuWidgetClass
-	// 	);
-	//
-	// 	if (MainMenuWidget)
-	// 	{
-	// 		MainMenuWidget->AddToViewport();
-	//
-	// 		bShowMouseCursor = true;
-	//
-	// 		FInputModeUIOnly InputMode;
-	// 		InputMode.SetWidgetToFocus(MainMenuWidget->TakeWidget());
-	//
-	// 		SetInputMode(InputMode);
-	// 	}
-	// }
+	if (!IsLocalController())
+		return;
+
+	if (MainMenuWidgetClass)
+	{
+		MainMenuWidget = CreateWidget<UMenu>(
+			this,
+			MainMenuWidgetClass
+		);
+
+		if (MainMenuWidget)
+		{
+			MainMenuWidget->AddToViewport();
+			MainMenuWidget->MenuSetup(4, "FreeForAll", "/Game/FirstPerson/Lvl_FirstPerson");
+			bShowMouseCursor = true;
+
+			FInputModeUIOnly InputMode;
+			InputMode.SetWidgetToFocus(MainMenuWidget->TakeWidget());
+
+			SetInputMode(InputMode);
+		}
+	}
 }

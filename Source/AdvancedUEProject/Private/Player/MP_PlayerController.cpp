@@ -73,3 +73,9 @@ void AMP_PlayerController::TogglePauseMenu()
 		SetIgnoreLookInput(false);
 	}
 }
+
+void AMP_PlayerController::SERVER_RequestRestart_Implementation()
+{
+	if (AWaveGameState* GS = GetWorld()->GetGameState<AWaveGameState>())
+		GS->RegisterRestartVote(this);
+}

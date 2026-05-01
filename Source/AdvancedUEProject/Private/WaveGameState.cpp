@@ -28,6 +28,11 @@ int AWaveGameState::GetAlivePlayers() const
 	return AlivePlayers;
 }
 
+int AWaveGameState::GetRestartVotes() const
+{
+	return RestartVotes;
+}
+
 EMatchPhase AWaveGameState::GetMatchPhase() const
 {
 	return MatchPhase;
@@ -63,6 +68,7 @@ void AWaveGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(AWaveGameState, AliveEnemies);
 	DOREPLIFETIME(AWaveGameState, TotalEnemies);
 	DOREPLIFETIME(AWaveGameState, AlivePlayers);
+	DOREPLIFETIME(AWaveGameState, RestartVotes);
 }
 
 void AWaveGameState::RegisterSpawner(AEnemyWaveSpawner* InSpawner)
@@ -168,4 +174,49 @@ void AWaveGameState::OnRep_EnemyCount()
 void AWaveGameState::OnRep_AlivePlayers()
 {
 	OnAlivePlayersChanged.Broadcast(AlivePlayers);
+}
+
+void AWaveGameState::OnRep_RestartVotes()
+{
+	OnRestartVoteChanged.Broadcast(RestartVotes, PlayerArray.Num());
+}
+
+void AWaveGameState::RegisterRestartVote(APlayerController* Voter)
+{
+	if (!HasAuthority() || !Voter)
+		return;
+ 
+	if (MatchPhase != EMatchPhase::Victory && MatchPhase != EMatchPhase::Defeat)
+		return;
+ 
+	if (RestartVoters.Contains(Voter))
+		return;
+ 
+	RestartVoters.Add(Voter);
+	RestartVotes = RestartVoters.Num();
+	
+	const int VotesNeeded = PlayerArray.Num();
+	OnRestartVoteChanged.Broadcast(RestartVotes, VotesNeeded);
+ 
+	if (RestartVotes >= VotesNeeded)
+		TriggerRestart();
+}
+ 
+void AWaveGameState::TriggerRestart()
+{
+	if (!HasAuthority())
+		return;
+	
+	const FString CurrentMap = GetWorld()->GetMapName();
+ 
+	FString CleanMap = CurrentMap;
+	CleanMap.RemoveFromStart(GetWorld()->StreamingLevelsPrefix);
+ 
+	FTimerHandle RestartTimerHandle;
+	GetWorldTimerManager().SetTimer(
+		RestartTimerHandle,
+		[this, CleanMap]()
+		{GetWorld()->ServerTravel(CleanMap + TEXT("?listen"), true);},
+		1.5f, 
+		false);
 }

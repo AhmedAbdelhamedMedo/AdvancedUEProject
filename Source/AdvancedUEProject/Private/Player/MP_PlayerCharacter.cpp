@@ -77,11 +77,8 @@ void AMP_PlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsLocallyControlled() && !Rep_bCanAttack)
+	if (IsLocallyControlled() && !Rep_bCanAttack && bIsDead && PlayerController)
 	{
-		if (!PlayerController)
-			return;
-
 		FVector WorldLocation, WorldDirection;
 
 		if (!PlayerController->DeprojectMousePositionToWorld(WorldLocation, WorldDirection))
@@ -144,6 +141,8 @@ void AMP_PlayerCharacter::HandleMove(const FInputActionValue& Value)
 
 void AMP_PlayerCharacter::HandleJumpStart()
 {
+	if (bIsDead)
+		return;
 	Jump();
 }
 
@@ -166,7 +165,11 @@ void AMP_PlayerCharacter::HandleSprintStop()
 
 void AMP_PlayerCharacter::HandleAttack()
 {
+	if (bIsDead)
+		return;
+	
 	HandleSprintStop();
+	
 	if (Rep_bCanAttack)
 	{
 		GetCharacterMovement()->bOrientRotationToMovement = false;
@@ -269,4 +272,26 @@ void AMP_PlayerCharacter::OnRep_YawRotation()
 {
 	if (!IsLocallyControlled())
 		SetActorRotation(FRotator(0.0f, Rep_fYawRotation, 0.0f));
+}
+
+
+void AMP_PlayerCharacter::NetMulticast_OnDeath_Implementation()
+{
+	Super::NetMulticast_OnDeath_Implementation();
+	Death();
+}
+
+void AMP_PlayerCharacter::Death()
+{
+	bIsDead = true;
+	
+	if (GetMesh())
+	{
+		GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		GetMesh()->SetCollisionObjectType(ECC_PhysicsBody);
+		GetMesh()->SetSimulatePhysics(true);
+		GetMesh()->SetEnableGravity(true);
+		GetMesh()->WakeAllRigidBodies();
+	}
 }
